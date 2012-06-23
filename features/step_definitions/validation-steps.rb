@@ -23,11 +23,11 @@ When /^I want to iterate over its records$/ do
 end
 
 Then /^I should have an option to skip invalid ones$/ do
-  @records.should respond_to(:each).with(1).argument
+  @records.should respond_to(:each_valid).with(0).arguments
 end
 
 Then /^all the reads in this case should be valid$/ do
-  @records.each(:valid => true) do |record|
-    record.should be_valid
-  end
+  count = 0
+  @records.each_valid {|read| count += 1 }
+  count.should == 411
 end

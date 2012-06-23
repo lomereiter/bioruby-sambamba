@@ -212,6 +212,18 @@ module Bio
         @command = command
       end
 
+      def each_valid
+
+        command = @command
+        if command.index('--valid').nil?
+          command.push '--valid'
+        end
+
+        AlignmentIterator.new(command).each do |read|
+          yield read
+        end
+      end
+
       def each
         Bio::Command.call_command(@command) do |io|
           io.each do |line|
