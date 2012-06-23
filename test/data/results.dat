@@ -1,3 +1,0 @@
-samtools view > /dev/null       |    1m 17s
-unoptimized                     |    5m 15s
-+ scope for Streams in parse    |    5m 00s
