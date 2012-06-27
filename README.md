@@ -19,13 +19,16 @@ For that, do the following:
 * install [DMD compiler](http://dlang.org/download.html)
 * install [Ragel](http://www.complang.org/ragel/) finite state machine compiler
 * clone sambamba repository and compile the tool
+
 ```sh
     git clone https://github.com/lomereiter/sambamba.git
     cd sambamba/CLItools/
     make
 ```
+
 * place the executable file <code>build/sambamba</code> to somewhere in your $PATH,
   for example:
+
 ```sh
     cp build/sambamba /usr/local/bin
 ```
