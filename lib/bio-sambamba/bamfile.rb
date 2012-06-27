@@ -70,7 +70,6 @@ module Bio
     # Represents SAM header
     class SamHeader
      
-      private
       # Creates a new SamHeader object for a specified file,
       # specifying additional options to pass to sambamba tool
       def initialize(filename, opts=[])
@@ -78,7 +77,6 @@ module Bio
         @opts = opts
       end
 
-      public
       # Raw text of SAM header
       def raw_contents
         @raw_contents ||= Bio::Command.query_command(['sambamba', '-H', @filename] + @opts)
@@ -124,13 +122,11 @@ module Bio
 
     # Represents a @SQ line from SAM header
     class SQLine
-      private
+
       # Wrap JSON object from sambamba output
       def initialize(json)
         @json = json
       end
-
-      public
 
       # Reference sequence name
       attr_reader :sequence_name if false
@@ -162,13 +158,11 @@ module Bio
 
     # Represents @RG line from SAM header, i.e. a read group
     class RGLine
-      private
+
       # Wrap JSON object from sambamba output
       def initialize(json)
         @json = json
       end
-
-      public
 
       # Unique read group identifier
       attr_reader :identifier if false
@@ -223,14 +217,12 @@ module Bio
 
     # Represents @PG line from SAM header (program record)
     class PGLine
-      private
+
       # Wrap JSON object from sambamba output
       def initialize(json)
         @json = json
       end
 
-      public
-     
       # Unique program record identifier
       attr_reader :identifier if false
 
@@ -386,14 +378,11 @@ module Bio
     class AlignmentIterator
       include Enumerable
 
-      private
       # Creates a new AlignmentIterator object which will
       # parse JSON outputted by a specified command.
       def initialize(command)
         @command = command
       end
-
-      public
 
       # Iterate only through valid alignments
       def each_valid
