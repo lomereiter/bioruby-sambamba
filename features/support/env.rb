@@ -7,7 +7,7 @@ rescue Bundler::BundlerError => e
   exit e.status_code
 end
 
-$LOAD_PATH.unshift(File.dirname(__FILE__) + '/../../lib/bio-sambamba')
-require 'bamfile'
+$LOAD_PATH.unshift(File.dirname(__FILE__) + '/../../lib/')
+require 'bio-sambamba.rb'
 
 require 'rspec/expectations'

@@ -8,7 +8,8 @@ Given /^I have an alignment from a BAM file$/ do
 end
 
 When /^I call 'valid\?' method$/ do
-  @is_valid = @alignment.valid?
+  pending
+#  @is_valid = @alignment.valid?
 end
 
 Then /^it should return whether it is valid or not$/ do
