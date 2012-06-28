@@ -23,7 +23,7 @@ For that, do the following:
 then install dmd and ragel easily with 
 
 ```sh
-     brew install dmd
+    brew install dmd
     brew install ragel
 ```
 
