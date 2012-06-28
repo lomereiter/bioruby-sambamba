@@ -27,6 +27,12 @@ then install dmd and ragel easily with
     brew install ragel
 ```
 
+* On Arch Linux you can use pacman to install dmd and ragel
+
+```sh
+    pacman -S dmd libphobos ragel
+```
+
 * clone sambamba repository and compile the tool
 
 ```sh
