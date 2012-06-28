@@ -18,6 +18,15 @@ For that, do the following:
 
 * install [DMD compiler](http://dlang.org/download.html)
 * install [Ragel](http://www.complang.org/ragel/) finite state machine compiler
+
+* On Mac OS X you can install [homebrew](http://mxcl.github.com/homebrew/) package manager, 
+then install dmd and ragel easily with 
+
+```sh
+    brew install dmd
+    brew install ragel
+```
+
 * clone sambamba repository and compile the tool
 
 ```sh
