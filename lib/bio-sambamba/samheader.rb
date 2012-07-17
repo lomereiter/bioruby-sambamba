@@ -14,7 +14,7 @@ module Bio
       # Raw text of SAM header
       def raw_contents
         if @raw_contents.nil? then
-          @raw_contents = Bio::Command.query_command(['sambamba', '-H', @filename] + @opts)
+          @raw_contents = Bio::Command.query_command(['sambamba', 'view', '-H', @filename] + @opts)
           if @raw_contents.start_with? "sambamba" then
             raise @raw_contents
           end
@@ -46,7 +46,7 @@ module Bio
         @sq_lines ||= @json['rg_lines'].map{|json| RGLine.new(json)}
       end
 
-      # An array of PGLine objects
+      # @return [PGLine] array of @PG lines
       def pg_lines
         @json ||= get_json
         @sq_lines ||= @json['pg_lines'].map{|json| PGLine.new(json)}
@@ -55,7 +55,7 @@ module Bio
       private
       # Calls sambamba to get underlying JSON object
       def get_json
-        command = ['sambamba', '-H', '--format=json', @filename] + @opts
+        command = ['sambamba', 'view', '-H', '--format=json', @filename] + @opts
         line = Bio::Command.query_command(command)
         raise line if line[0] != '{'
         @json = Oj.load(line)

@@ -14,7 +14,11 @@ Note: this software is under active development!
 ```
 
 In order to use the gem, you also need <code>sambamba</code> tool installed.
-For that, do the following:
+
+If you use Debian, you can download a package for your architecture from
+[github downloads](http://github.com/lomereiter/sambamba/downloads).
+
+Otherwise, you need to do the following:
 
 * install [DMD compiler](http://dlang.org/download.html)
 * install [Ragel](http://www.complang.org/ragel/) finite state machine compiler

@@ -18,7 +18,7 @@ module Bio
 
       # Returns an AlignmentIterator object for iterating over all alignments in the file
       def alignments
-        Bio::Bam::AlignmentIterator.new ['sambamba', '--format=json', @filename]
+        Bio::Bam::AlignmentIterator.new ['sambamba', 'view', '--format=json', @filename]
       end
 
       # True if index file was found 
@@ -35,9 +35,9 @@ module Bio
       # * _chr_: reference sequence
       # * _region_: a Range representing an interval. Coordinates are 1-based.
       def fetch(chr, region)
-        Bio::Bam::AlignmentIterator.new ['sambamba', '--format=json', 
+        Bio::Bam::AlignmentIterator.new ['sambamba', 'view', '--format=json', 
                                          @filename,
-                                          "#{chr}:#{region.min}-#{region.max}"]
+                                         "#{chr}:#{region.min}-#{region.max}"]
       end
     end
     

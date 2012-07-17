@@ -17,7 +17,7 @@ module Bio
 
       # Returns an AlignmentIterator object for iterating over all alignments in the file
       def alignments
-        Bio::Bam::AlignmentIterator.new ['sambamba', '--format=json', '-S', @filename]
+        Bio::Bam::AlignmentIterator.new ['sambamba', 'view', '--format=json', '-S', @filename]
       end
     end
 
