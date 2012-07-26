@@ -52,18 +52,36 @@ module Bio
       # 1-based leftmost position of the mate/next segment
       attr_reader :mate_position if false
 
+      # The number of reference bases covered
+      def bases_covered
+        return 0 if cigar_string == '*'
+        cigar_string.split(/([MIDNSHP=X])/).each_slice(2).reduce(0) {|res, op| 
+          res += op[0].to_i unless ('M=XDN'.index op[1]).nil?
+          res
+        }
+      end
+
+      {'position' => 'pos',
+       'mapping_quality' => 'mapq',
+       'template_length' => 'tlen',
+       'flag' => 'flag',
+       'mate_position' => 'pnext'
+      }.each do |k, v|
+        eval <<-DEFINE_READER
+          def #{k}
+            @json['#{v}'].to_i
+          end
+        DEFINE_READER
+      end
+
       {'tags' => 'tags',
        'reference' => 'rname',
        'read_name' => 'qname',
-       'position' => 'pos',
-       'mapping_quality' => 'mapq',
        'cigar_string' => 'cigar',
-       'template_length' => 'tlen',
-       'flag' => 'flag',
        'quality' => 'qual',
        'sequence' => 'seq',
-       'mate_reference' => 'rnext',
-       'mate_position' => 'pnext'}.each do |k, v|
+       'mate_reference' => 'rnext'
+       }.each do |k, v|
         eval <<-DEFINE_READER
           def #{k}
             @json['#{v}']

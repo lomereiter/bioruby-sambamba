@@ -35,11 +35,17 @@ module Bio
       # * _chr_: reference sequence
       # * _region_: a Range representing an interval. Coordinates are 1-based.
       def fetch(chr, region)
-        Bio::Bam::AlignmentIterator.new ['sambamba', 'view', '--format=json', 
-                                         @filename,
-                                         "#{chr}:#{region.min}-#{region.max}"]
+        iter = Bio::Bam::AlignmentIterator.new ['sambamba', 'view', '--format=json', 
+                                               @filename]
+        iter.chromosome = chr
+        iter.region = region
+        iter
       end
-    end
+
+      def [](chr)
+        fetch(chr, nil)
+      end
+    end # class File
     
-  end
-end
+  end # module Bam
+end # module Bio
