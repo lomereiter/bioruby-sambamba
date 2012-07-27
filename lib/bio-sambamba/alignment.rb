@@ -31,7 +31,7 @@ module Bio
       attr_reader :mapping_quality if false
 
       # CIGAR string
-      attr_reader :cigar_string if false
+      attr_reader :cigar if false
 
       # Observed template length
       attr_reader :template_length if false
@@ -54,8 +54,8 @@ module Bio
 
       # The number of reference bases covered
       def bases_covered
-        return 0 if cigar_string == '*'
-        cigar_string.split(/([MIDNSHP=X])/).each_slice(2).reduce(0) {|res, op| 
+        return 0 if cigar == '*'
+        cigar.split(/([MIDNSHP=X])/).each_slice(2).reduce(0) {|res, op| 
           res += op[0].to_i unless ('M=XDN'.index op[1]).nil?
           res
         }
@@ -77,7 +77,7 @@ module Bio
       {'tags' => 'tags',
        'reference' => 'rname',
        'read_name' => 'qname',
-       'cigar_string' => 'cigar',
+       'cigar' => 'cigar',
        'quality' => 'qual',
        'sequence' => 'seq',
        'mate_reference' => 'rnext'

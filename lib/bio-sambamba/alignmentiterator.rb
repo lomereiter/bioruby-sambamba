@@ -55,8 +55,14 @@ module Bio
       # Set filter for alignments
       def with_filter(filter)
         command = @command
-        command.push('-F "' + filter.to_s + '"')
+        command.push('-F')
+        command.push(filter.to_s)
         AlignmentIterator.new command
+      end
+
+      def select(&block)
+        puts 'call select'
+        with_filter (Bio::Bam::filter &block)
       end
 
       def referencing(chr)

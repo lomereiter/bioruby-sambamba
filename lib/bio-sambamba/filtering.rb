@@ -42,11 +42,11 @@ module Bio
 
     module FlagQueries
       def is_set
-        @querybuilder.subexpressions << "not #{@name}"
+        @querybuilder.subexpressions << "#{@name}"
       end
 
       def is_unset
-        @querybuilder.subexpressions << "#{@name}"
+        @querybuilder.subexpressions << "not #{@name}"
       end
     end
 
@@ -72,8 +72,8 @@ module Bio
 
       @@default_value = { :ref_id          =>  -1,
                           :mate_ref_id     =>  -1,
-                          :position        =>  -1,
-                          :mate_position   =>  -1,
+                          :position        =>   0,
+                          :mate_position   =>   0,
                           :template_length =>   0,
                           :mapping_quality => 255
                         }
@@ -158,6 +158,10 @@ module Bio
         self.send :define_method, op do |rhs|
           if not rhs.kind_of? Integer then
             raise "right-hand side must be an integer, not #{rhs.inspect}"
+          end
+          # 1-based -> 0-based
+          if @name == :position || @name == :mate_position then
+            rhs -= 1
           end
           super(rhs)
         end

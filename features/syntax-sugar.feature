@@ -19,3 +19,10 @@ Feature: syntax sugar
          Then I should get an enumerator for alignments
           And each of them should have reference sequence "chr1"
           And each of them should overlap region [500, 1000] (1-based)
+
+    Scenario: shortcut for filtering
+        Given I have a BAM file
+          And an alignment iterator
+         When I use 'select' method of this iterator with a block
+         Then it should be the same as calling Bio::Bam::filter with this block
+          And passing it as an argument to the 'with_filter' method

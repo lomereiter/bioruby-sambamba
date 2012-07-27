@@ -23,7 +23,7 @@ Then /^I should be able to access all fields mentioned in SAM\/BAM format specif
   @read.position.should == 100
   @read.flag.should == 69
   @read.mapping_quality.should == 0
-  @read.cigar_string.should == '*'
+  @read.cigar.should == '*'
   @read.reference.should == 'chr1'
   @read.quality.should == [27, 27, 27, 22, 27, 27, 27, 26, 27, 27, 27, 27, 27, 27, 27, 27, 23, 26, 26, 27, 22, 26, 19, 27, 26, 27, 26, 26, 26, 26, 26, 24, 19, 27, 26]
 end
