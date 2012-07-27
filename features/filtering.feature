@@ -61,11 +61,11 @@ Feature: custom filters for BAM data
         Examples:
             |            conditions                                |  n-ary operation   |
             | ["position >= 100.bp", "mate_position <= 200.bp"]    |      union         |
-            | ["tag(:NM) == 3", "tag(:UQ) == 0"]                   |    intersection    |         
+            | ["tag(:NM) == 3", "tag(:UQ) == 42"]                  |    intersection    |         
 
     Scenario Outline: negation of filter
-        Given I have a <condition>
-         When I apply 'not' operator to it
+        Given I have a condition <condition>
+         When I enclose it in 'negate' block
          Then I should have a condition representing the same alignments as <'not' equivalent>
 
          Examples:

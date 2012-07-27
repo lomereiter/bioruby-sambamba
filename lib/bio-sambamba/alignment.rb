@@ -15,6 +15,10 @@ module Bio
         @json['tags'][tag]
       end
 
+      def ==(read)
+        read.json == json
+      end
+
       # Hash of record tags
       attr_reader :tags if false
 
@@ -143,6 +147,10 @@ module Bio
       def is_duplicate             
         (flag & 0x400) != 0
       end
+
+      private
+      attr_accessor :json
+
     end
 
   end

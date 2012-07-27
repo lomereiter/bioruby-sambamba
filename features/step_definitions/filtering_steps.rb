@@ -62,35 +62,25 @@ When /^I enclose them by a (\w+) block$/ do |op|
 end
 
 Then /^I should get a condition representing (\w+) of those$/ do |op|
-    pending
-    read_names_c = @filters.map {|f| @bam.alignments.with_filter(f).map(&:read_name).to_a}
-    puts read_names_c.map(&:length)
-    read_names_f = @bam.alignments.with_filter(@all_filter).map(&:read_name).to_a
+    seq_c = @filters.map {|f| @bam.alignments.with_filter(f).map(&:sequence).to_a}
+    seq_f = @bam.alignments.with_filter(@all_filter).map(&:sequence).to_a
     if op == 'union' then
-        read_names_c.reduce(&:|).sort.should == read_names_f.uniq.sort
+        seq_c.reduce(&:|).sort.should == seq_f.uniq.sort
     elsif op == 'intersection'
-        read_names_c.reduce(&:&).sort.should == read_names_f.uniq.sort
+        seq_c.reduce(&:&).sort.should == seq_f.uniq.sort
     else 
         raise 'unknown op: ' + op
     end
 end
 
-Given /^I have a flag\.paired\.is_set$/ do
-    pending # express the regexp above with the code you wish you had
+Given /^I have a condition (.*?)$/ do |cond|
+    @negation = Bio::Bam::filter { negate { eval(cond) }}
 end
 
-When /^I apply 'not' operator to it$/ do
-    pending # express the regexp above with the code you wish you had
+When /^I enclose it in 'negate' block$/ do
 end
 
-Then /^I should have a condition representing the same alignments as flag\.paired\.is_unset$/ do
-    pending # express the regexp above with the code you wish you had
-end
-
-Given /^I have a mapping_quality >= (\d+)$/ do |arg1|
-    pending # express the regexp above with the code you wish you had
-end
-
-Then /^I should have a condition representing the same alignments as mapping_quality < (\d+)$/ do |arg1|
-    pending # express the regexp above with the code you wish you had
+Then /^I should have a condition representing the same alignments as (.*?)$/ do |equiv|
+    @equiv = Bio::Bam::filter { eval(equiv) }
+    @bam.alignments.with_filter(@negation).map(&:read_name).should == @bam.alignments.with_filter(@equiv).map(&:read_name)
 end

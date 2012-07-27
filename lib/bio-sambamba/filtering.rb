@@ -107,6 +107,12 @@ module Bio
         end
       end
 
+      def negate &block
+        qb = QueryBuilder.new
+        qb.instance_eval &block
+        @subexpressions << ('not (' + qb.expression + ')')
+      end
+
       def union &block
         qb = QueryBuilder.new
         qb.instance_eval &block
