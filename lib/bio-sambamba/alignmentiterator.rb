@@ -61,8 +61,15 @@ module Bio
       end
 
       def select(&block)
-        puts 'call select'
         with_filter (Bio::Bam::filter &block)
+      end
+
+      def count
+        command = @command
+        command.push('-c')
+        Bio::Command.call_command(command) do |io|
+          return io.readline.to_i
+        end
       end
 
       def referencing(chr)
