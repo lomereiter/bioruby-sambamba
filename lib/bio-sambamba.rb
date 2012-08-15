@@ -1,6 +1,7 @@
 require 'bio/command'
 require 'oj'
 
+require 'bio-sambamba/exception.rb'
 require 'bio-sambamba/samheader.rb'
 require 'bio-sambamba/alignment.rb'
 require 'bio-sambamba/alignmentiterator.rb'

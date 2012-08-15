@@ -4,10 +4,13 @@ module Bio
 
     # Class providing access to SAM files
     class File
+      
+      include FileExistenceChecker
 
       # Creates an object for access to SAM file
       def initialize(filename)
         @filename = filename
+        check_file_existence filename
       end
 
       # SAM header
@@ -17,7 +20,7 @@ module Bio
 
       # Returns an AlignmentIterator object for iterating over all alignments in the file
       def alignments
-        Bio::Bam::AlignmentIterator.new ['sambamba', 'view', '--format=json', '-S', @filename]
+        Bio::Bam::AlignmentIterator.new ['sambamba', 'view', '--format', 'json', '-S', @filename]
       end
     end
 

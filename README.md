@@ -14,7 +14,7 @@ Note: this software is under active development!
     rake install
 ```
 
-In order to use the gem, you also need <code>sambamba</code> tool installed.
+In order to use the gem, you also need <code>sambamba</code> tool installed (version >= 0.2.4).
 
 If you use Debian, you can download a package for your architecture from
 [github downloads](http://github.com/lomereiter/sambamba/downloads).

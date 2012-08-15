@@ -3,6 +3,7 @@ module Bio
 
     # Represents SAM header
     class SamHeader
+      include SambambaStderrParser
      
       # Creates a new SamHeader object for a specified file,
       # specifying additional options to pass to sambamba tool
@@ -14,9 +15,10 @@ module Bio
       # Raw text of SAM header
       def raw_contents
         if @raw_contents.nil? then
-          @raw_contents = Bio::Command.query_command(['sambamba', 'view', '-H', @filename] + @opts)
-          if @raw_contents.start_with? "sambamba" then
-            raise @raw_contents
+          cmd = ['sambamba', 'view', '-H', @filename] + @opts
+          Bio::Command.call_command_open3(cmd) do |pin, pout, perr|
+            @raw_contents = pout.read
+            raise_exception_if_stderr_is_not_empty(perr)
           end
         end
         @raw_contents
@@ -55,9 +57,12 @@ module Bio
       private
       # Calls sambamba to get underlying JSON object
       def get_json
-        command = ['sambamba', 'view', '-H', '--format=json', @filename] + @opts
-        line = Bio::Command.query_command(command)
-        raise line if line[0] != '{'
+        cmd = ['sambamba', 'view', '-H', '--format=json', @filename] + @opts
+        line = ''
+        Bio::Command.call_command_open3(cmd) do |pin, pout, perr|
+          line = pout.read
+          raise_exception_if_stderr_is_not_empty(perr)
+        end
         @json = Oj.load(line)
       end
     end
