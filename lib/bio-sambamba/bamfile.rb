@@ -29,7 +29,8 @@ module Bio
 
       # Returns an AlignmentIterator object for iterating over all alignments in the file
       def alignments
-        Bio::Bam::AlignmentIterator.new ['sambamba', 'view', '--format', 'json', @filename]
+        cmdline = ['sambamba', 'view', '--format', 'msgpack', @filename]
+        Bio::Bam::AlignmentIterator.new(cmdline, reference_sequence_names)
       end
 
       # True if index file was found 
@@ -47,15 +48,24 @@ module Bio
       # * _chr_: reference sequence
       # * _region_: a Range representing an interval. Coordinates are 1-based.
       def fetch(chr, region)
-        iter = Bio::Bam::AlignmentIterator.new ['sambamba', 'view', '--format=json', 
-                                               @filename]
+        cmdline = ['sambamba', 'view', '--format=msgpack', @filename]
+        iter = Bio::Bam::AlignmentIterator.new(cmdline, reference_sequence_names)
         iter.chromosome = chr
         iter.region = region
         iter
       end
 
+      def reference_sequences
+        @reference_sequences ||= Oj.load(Bio::Command.query_command ['sambamba', 'view', '-I', @filename])
+      end
+
       def [](chr)
         fetch(chr, nil)
+      end
+
+      private
+      def reference_sequence_names
+        @reference_sequence_names ||= reference_sequences.map {|ref| ref['name']}
       end
     end # class File
     

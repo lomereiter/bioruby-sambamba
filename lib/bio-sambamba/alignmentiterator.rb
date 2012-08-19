@@ -8,8 +8,10 @@ module Bio
 
       # Creates a new AlignmentIterator object which will
       # parse JSON outputted by a specified command.
-      def initialize(command)
+      # Names of reference sequences must be provided as well.
+      def initialize(command, references)
         @command = command
+        @references = references
       end
 
       # Iterate only through valid alignments
@@ -17,12 +19,14 @@ module Bio
 
         return enum_for(:each_valid) if not block_given?
 
-        command = @command
+        command = get_command
         if command.index('--valid').nil?
           command.push '--valid'
         end
 
-        AlignmentIterator.new(command).each do |read|
+        iter = self.clone
+        iter.command = command
+        iter.each do |read|
           yield read
         end
       end
@@ -55,10 +59,15 @@ module Bio
         command = get_command
 
         Bio::Command.call_command_open3(command) do |pin, pout, perr|
-          pout.each do |line|
-            json = Oj.load(line)
-            yield Bio::Bam::Alignment.new(json)
+
+          unpacker = MessagePack::Unpacker.new pout
+          begin
+            unpacker.each do |obj|
+              yield Bio::Bam::Alignment.new(obj, @references)
+            end
+          rescue EOFError
           end
+
           raise_exception_if_stderr_is_not_empty(perr)
         end
       end
@@ -101,7 +110,7 @@ module Bio
       end
 
       def clone
-        iter = AlignmentIterator.new @command
+        iter = AlignmentIterator.new @command, @references
         iter.chromosome = chromosome
         iter.region = region
         iter

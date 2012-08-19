@@ -1,5 +1,6 @@
 require 'bio/command'
 require 'oj'
+require 'msgpack'
 
 require 'bio-sambamba/exception.rb'
 require 'bio-sambamba/samheader.rb'

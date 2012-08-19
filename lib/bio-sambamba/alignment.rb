@@ -4,95 +4,101 @@ module Bio
     # Class representing an alignment record
     class Alignment
       
-      # Creates a new object from JSON output of sambamba tool
-      def initialize(json)
-        @json = json
+      # Creates a new object from MessagePack record
+      def initialize(obj, reference_sequence_names)
+        @obj = obj
+        @reference = reference_sequence_names[ref_id]
+        @mate_reference = reference_sequence_names[mate_ref_id]
       end
 
       # Access a record tag
       def [](tag)
         raise 'tag length must be two' unless tag.length == 2
-        @json['tags'][tag]
+        tags[tag]
       end
 
       def ==(read)
-        read.json == json
+        read.obj == obj
       end
 
       # Hash of record tags
-      attr_reader :tags if false
+      def tags
+        obj[12]
+      end
 
-      # Name of reference sequence
-      attr_reader :reference if false
+      # ID of reference sequence
+      def ref_id
+        obj[2]
+      end
 
       # Query template name
-      attr_reader :read_name if false
+      def read_name
+        obj[0]
+      end
 
       # 1-based leftmost mapping position
-      attr_reader :position if false
+      def position
+        obj[3]
+      end
 
       # Mapping quality
-      attr_reader :mapping_quality if false
+      def mapping_quality
+        obj[4]
+      end
+
+      # CIGAR: pairs of operations and lengths, 
+      # or nil if information is not available
+      def cigar_operations
+        return nil if obj[5].nil?
+        obj[6].chars.zip obj[5]
+      end
 
       # CIGAR string
-      attr_reader :cigar if false
+      def cigar
+        return '*' if cigar_operations.nil?
+        cigar_operations.reduce(''){|s, op_len| s + op_len[0] + op_len[1].to_s}
+      end
 
       # Observed template length
-      attr_reader :template_length if false
+      def template_length
+        obj[9]
+      end
 
       # Bitwise flag
-      attr_reader :flag if false
+      def flag
+        obj[1]
+      end
 
       # Phred-scaled base quality, an integer array
       # of the same length as the sequence
-      attr_reader :quality if false
+      def quality
+        obj[11].bytes.to_a
+      end
 
       # Segment sequence
-      attr_reader :sequence if false
+      def sequence
+        obj[10]
+      end
 
       # Reference sequence name of the mate/next segment
-      attr_reader :mate_reference if false
+      def mate_ref_id
+        obj[7]
+      end
 
       # 1-based leftmost position of the mate/next segment
-      attr_reader :mate_position if false
+      def mate_position
+        obj[8]
+      end
 
       # The number of reference bases covered
       def bases_covered
-        return 0 if cigar == '*'
-        cigar.split(/([MIDNSHP=X])/).each_slice(2).reduce(0) {|res, op| 
-          res += op[0].to_i unless ('M=XDN'.index op[1]).nil?
+        return 0 if cigar_operations.nil?
+        cigar_operations.reduce(0) {|res, op| 
+          res += op[1] unless ('M=XDN'.index op[0]).nil?
           res
         }
       end
-
-      {'position' => 'pos',
-       'mapping_quality' => 'mapq',
-       'template_length' => 'tlen',
-       'flag' => 'flag',
-       'mate_position' => 'pnext'
-      }.each do |k, v|
-        eval <<-DEFINE_READER
-          def #{k}
-            @json['#{v}'].to_i
-          end
-        DEFINE_READER
-      end
-
-      {'tags' => 'tags',
-       'reference' => 'rname',
-       'read_name' => 'qname',
-       'cigar' => 'cigar',
-       'quality' => 'qual',
-       'sequence' => 'seq',
-       'mate_reference' => 'rnext'
-       }.each do |k, v|
-        eval <<-DEFINE_READER
-          def #{k}
-            @json['#{v}']
-          end
-        DEFINE_READER
-      end
-
+      
       # Template having multiple segments in sequencing
       def is_paired                
         (flag & 0x1) != 0
@@ -148,8 +154,14 @@ module Bio
         (flag & 0x400) != 0
       end
 
+      # Reference sequence name
+      attr_reader :reference
+
+      # Mate reference sequence name
+      attr_reader :mate_reference
+
       private
-      attr_accessor :json
+      attr_accessor :obj
 
     end
 
