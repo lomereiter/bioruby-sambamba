@@ -1,7 +1,6 @@
 source "http://rubygems.org"
 
 gem "bio", "~> 1.4.2"
-gem "oj", "~> 1.3.4"
 gem "msgpack", "~> 0.4.7"
 
 group :development do

@@ -1,5 +1,5 @@
 require 'bio/command'
-require 'oj'
+require 'json'
 require 'msgpack'
 
 require 'bio-sambamba/exception.rb'

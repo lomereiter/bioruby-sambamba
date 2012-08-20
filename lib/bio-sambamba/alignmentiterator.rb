@@ -60,10 +60,16 @@ module Bio
 
         Bio::Command.call_command_open3(command) do |pin, pout, perr|
 
+          counter = 0 # for triggering garbage collection manually
           unpacker = MessagePack::Unpacker.new pout
+
           begin
             unpacker.each do |obj|
+              counter += 1
               yield Bio::Bam::Alignment.new(obj, @references)
+              if (counter & 0xFFF) == 0 then
+                ObjectSpace.garbage_collect
+              end
             end
           rescue EOFError
           end

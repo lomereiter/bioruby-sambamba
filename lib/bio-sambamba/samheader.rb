@@ -26,172 +26,185 @@ module Bio
 
       # Format version
       def version
-        @json ||= get_json
-        @json['format_version']
+        obj[0]
       end
 
       # Sorting order
       def sorting_order
-        @json ||= get_json
-        @json['sorting_order']
+        obj[1]
       end
 
       # An array of SQLine objects
       def sq_lines
-        @json ||= get_json
-        @sq_lines ||= @json['sq_lines'].map{|json| SQLine.new(json)}
+        @sq_lines ||= obj[2].map{|rec| SQLine.new(rec)}
       end
 
       # An array of RGLine objects
       def rg_lines
-        @json ||= get_json
-        @sq_lines ||= @json['rg_lines'].map{|json| RGLine.new(json)}
+        @rg_lines ||= obj[3].map{|rec| RGLine.new(rec)}
       end
 
-      # @return [PGLine] array of @PG lines
+      # An array of PGLine objects
       def pg_lines
-        @json ||= get_json
-        @sq_lines ||= @json['pg_lines'].map{|json| PGLine.new(json)}
+        @pg_lines ||= obj[4].map{|rec| PGLine.new(rec)}
       end
 
       private
-      # Calls sambamba to get underlying JSON object
-      def get_json
-        cmd = ['sambamba', 'view', '-H', '--format=json', @filename] + @opts
+      def obj
+        return @obj unless @obj.nil?
+        cmd = ['sambamba', 'view', '-H', '--format', 'msgpack', @filename] + @opts
         line = ''
         Bio::Command.call_command_open3(cmd) do |pin, pout, perr|
-          line = pout.read
+          @obj = MessagePack.unpack(pout.read)
           raise_exception_if_stderr_is_not_empty(perr)
         end
-        @json = Oj.load(line)
+        @obj
       end
     end
 
     # Represents a @SQ line from SAM header
     class SQLine
 
-      # Wrap JSON object from sambamba output
-      def initialize(json)
-        @json = json
+      # Wrap MessagePack record from sambamba output
+      def initialize(obj)
+        @obj = obj
       end
 
       # Reference sequence name
-      attr_reader :sequence_name if false
+      def sequence_name
+        @obj['SN']
+      end
 
       # Reference sequence length
-      attr_reader :sequence_length if false
+      def sequence_length
+        @obj['LN']
+      end
 
       # Genome assembly identifier
-      attr_reader :assembly if false
+      def assembly
+        @obj['AS']
+      end
 
       # MD5 checksum of the sequence in uppercase, with gaps and spaces removed
-      attr_reader :md5 if false
+      def md5
+        @obj['M5']
+      end
 
       # Species
-      attr_reader :species if false
+      def species
+        @obj['SP']
+      end
 
       # URI of the sequence
-      attr_reader :uri if false
-
-      ['sequence_name', 'sequence_length', 
-       'assembly', 'md5', 'species', 'uri'].each do |sq_line_field|
-        eval <<-DEFINE_READER
-          def #{sq_line_field}
-            @json['#{sq_line_field}']
-          end
-        DEFINE_READER
+      def uri
+        @obj['UR']
       end
+
     end
 
     # Represents @RG line from SAM header, i.e. a read group
     class RGLine
 
-      # Wrap JSON object from sambamba output
-      def initialize(json)
-        @json = json
+      # Wrap MessagePack record from sambamba output
+      def initialize(obj)
+        @obj = obj
       end
 
       # Unique read group identifier
-      attr_reader :identifier if false
+      def identifier
+        @obj['ID']
+      end
 
       # Name of sequencing center
-      attr_reader :sequencing_center if false
+      def sequencing_center
+        @obj['CN']
+      end
 
       # Description
-      attr_reader :description if false
+      def description
+        @obj['DS']
+      end
 
       # Date the run was produced (ISO8601 date or date/time)
-      attr_reader :date if false
+      def date
+        @obj['DT']
+      end
 
       # Flow order. The array of nucleotide bases that correspond to the 
       # nucleotides used for each flow of each read. Multi-base flows are 
       # encoded in IUPAC format, and non-nucleotide flows by various other
       # characters.
-      attr_reader :flow_order if false
+      def flow_order
+        @obj['FO']
+      end
 
       # The array of nucleotide bases that correspond to the key sequence of each read
-      attr_reader :key_sequence if false
+      def key_sequence
+        @obj['KS']
+      end
 
       # Library
-      attr_reader :library if false
+      def library
+        @obj['LB']
+      end
 
       # Programs used for processing the read group
-      attr_reader :programs if false
+      def programs
+        @obj['PG']
+      end
 
       # Predicted median insert size
-      attr_reader :predicted_insert_size if false
+      def predicted_insert_size
+        @obj['PI']
+      end
 
       # Platform/technology used to produce the reads
-      attr_reader :platform if false
+      def platform
+        @obj['PL']
+      end
 
-      # Platform unit (e.g. flowcell-barcode.lane for Illumina or slide for SOLiD). Unique identifier.
-      attr_reader :platform_unit if false
+      # Platform unit (e.g. flowcell-barcode lane for Illumina or slide for SOLiD). Unique identifier.
+      def platform_unit
+        @obj['PU']
+      end
 
       # Sample
-      attr_reader :sample if false
-
-      ['identifier', 'sequencing_center', 'description', 'date',
-       'flow_order', 'key_sequence', 'library', 'programs',
-       'predicted_insert_size', 'platform', 
-       'platform_unit', 'sample'].each do |rg_line_field|
-        eval <<-DEFINE_READER
-          def #{rg_line_field}
-            @json['#{rg_line_field}']
-          end
-        DEFINE_READER
+      def sample
+        @obj['SM']
       end
     end
 
     # Represents @PG line from SAM header (program record)
     class PGLine
 
-      # Wrap JSON object from sambamba output
-      def initialize(json)
-        @json = json
+      # Wrap MessagePack record from sambamba output
+      def initialize(obj)
+        @obj = obj
       end
 
       # Unique program record identifier
-      attr_reader :identifier if false
+      def identifier
+        @obj['ID']
+      end
 
       # Program name
-      attr_reader :program_name if false
+      def program_name
+        @obj['PN']
+      end
 
       # Command line
-      attr_reader :command_line if false
+      def command_line
+        @obj['CL']
+      end
 
       # Identifier of previous program in chain
-      attr_reader :previous_program if false
+      def previous_program
+        @obj['PP']
+      end
 
       # Program version
-      attr_reader :program_version if false
-
-      ['identifier', 'program_name', 'command_line',
-       'previous_program', 'program_version'].each do |rg_line_field|
-        eval <<-DEFINE_READER
-          def #{rg_line_field}
-            @json['#{rg_line_field}']
-          end
-        DEFINE_READER
+      def program_version
+        @obj['VN']
       end
     end
 

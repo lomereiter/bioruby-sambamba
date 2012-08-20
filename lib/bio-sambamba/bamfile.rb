@@ -56,7 +56,7 @@ module Bio
       end
 
       def reference_sequences
-        @reference_sequences ||= Oj.load(Bio::Command.query_command ['sambamba', 'view', '-I', @filename])
+        @reference_sequences ||= JSON.parse(Bio::Command.query_command ['sambamba', 'view', '-I', @filename])
       end
 
       def [](chr)
