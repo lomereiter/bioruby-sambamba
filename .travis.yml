@@ -8,8 +8,6 @@ rvm:
 jdk:
   - oraclejdk7
 
-script: "bundle exec rake test"
-
 install:
   - wget https://github.com/downloads/lomereiter/sambamba/sambamba-0.2.6_i386.deb
   - sudo dpkg -i sambamba-0.2.6_i386.deb
