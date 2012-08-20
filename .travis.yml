@@ -2,8 +2,8 @@ language: ruby
 rvm:
   - 1.9.2
   - 1.9.3
-  - jruby-19mode
-  - rbx-19mode
+#  - jruby-19mode -- the same problems as with BioRuby, related to popen3
+#  - rbx-19mode -- msgpack extension doesn't work with Rubinius
 
 jdk:
   - oraclejdk7
