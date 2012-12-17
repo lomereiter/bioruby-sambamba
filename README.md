@@ -19,30 +19,26 @@ In order to use the gem, you also need <code>sambamba</code> tool installed (ver
 If you use Debian, you can download a package for your architecture from
 [github downloads](http://github.com/lomereiter/sambamba/downloads).
 
-Otherwise, you need to do the following:
-
-* install [DMD compiler](http://dlang.org/download.html)
-* install [Ragel](http://www.complang.org/ragel/) finite state machine compiler
+Otherwise, you need to install [DMD compiler](http://dlang.org/download.html).
 
 * On Mac OS X you can install [homebrew](http://mxcl.github.com/homebrew/) package manager, 
-then install dmd and ragel easily with 
+then install dmd easily with 
 
 ```sh
     brew install dmd
-    brew install ragel
 ```
 
-* On Arch Linux you can use pacman to install dmd and ragel
+* On Arch Linux you can use pacman to install dmd
 
 ```sh
-    pacman -S dmd libphobos ragel
+    pacman -S dmd libphobos
 ```
 
 * clone sambamba repository and compile the tool
 
 ```sh
-    git clone https://github.com/lomereiter/sambamba.git
-    cd sambamba/CLItools/
+    git clone --recursive https://github.com/lomereiter/sambamba.git
+    cd sambamba/
     make
 ```
 
